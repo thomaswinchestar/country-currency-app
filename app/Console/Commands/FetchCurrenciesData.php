@@ -42,7 +42,7 @@ class FetchCurrenciesData extends Command
 
         // Then get latest exchange rates
         $ratesResponse = Http::get('https://openexchangerates.org/api/latest.json', [
-            'app_id' => env('OPEN_EXCHANGE_RATES_API_KEY', '6fd1dcd40abe4321b2bde233ca30c0c4')
+            'app_id' => env('OPEN_EXCHANGE_RATES_API_KEY')
         ]);
 
         if (!$ratesResponse->successful()) {
