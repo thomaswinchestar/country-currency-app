@@ -39,6 +39,15 @@ const showingNavigationDropdown = ref(false);
                                 >
                                     Dashboard
                                 </NavLink>
+                                <NavLink :href="route('countries.index')" :active="route().current('countries.*')">
+                                    Countries
+                                </NavLink>
+                                <NavLink :href="route('cities.index')" :active="route().current('cities.*')">
+                                    Cities
+                                </NavLink>
+                                <NavLink :href="route('currencies.index')" :active="route().current('currencies.*')">
+                                    Currencies
+                                </NavLink>
                             </div>
                         </div>
 
@@ -145,6 +154,24 @@ const showingNavigationDropdown = ref(false);
                             :active="route().current('dashboard')"
                         >
                             Dashboard
+                        </ResponsiveNavLink>
+                        <ResponsiveNavLink
+                            :href="route('countries.index')"
+                            :active="route().current('countries.*')"
+                        >
+                            Countries
+                        </ResponsiveNavLink>
+                        <ResponsiveNavLink
+                            :href="route('cities.index')"
+                            :active="route().current('cities.*')"
+                        >
+                            Cities
+                        </ResponsiveNavLink>
+                        <ResponsiveNavLink
+                            :href="route('currencies.index')"
+                            :active="route().current('currencies.*')"
+                        >
+                            Currencies
                         </ResponsiveNavLink>
                     </div>
 

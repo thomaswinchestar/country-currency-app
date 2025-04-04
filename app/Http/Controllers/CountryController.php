@@ -11,10 +11,36 @@ class CountryController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index()
+    public function index(Request $request)
     {
-        $countries = Country::orderBy('name')
+        $search = $request->input('search', '');
+        
+        $query = Country::query();
+        
+        if ($search) {
+            // Split the search term into keywords
+            $keywords = preg_split('/\s+/', $search, -1, PREG_SPLIT_NO_EMPTY);
+            
+            $query->where(function($q) use ($search, $keywords) {
+                // Search for the full term
+                $q->where('name', 'like', "%{$search}%")
+                  ->orWhere('code', 'like', "%{$search}%")
+                  ->orWhere('capital', 'like', "%{$search}%")
+                  ->orWhere('region', 'like', "%{$search}%");
+                  
+                // Also search for each keyword individually
+                foreach ($keywords as $keyword) {
+                    $q->orWhere('name', 'like', "%{$keyword}%")
+                      ->orWhere('code', 'like', "%{$keyword}%")
+                      ->orWhere('capital', 'like', "%{$keyword}%")
+                      ->orWhere('region', 'like', "%{$keyword}%");
+                }
+            });
+        }
+        
+        $countries = $query->orderBy('name')
             ->paginate(15)
+            ->withQueryString()
             ->through(function ($country) {
                 return [
                     'id' => $country->id,
@@ -26,7 +52,10 @@ class CountryController extends Controller
             });
 
         return Inertia::render('Countries/Index', [
-            'countries' => $countries
+            'countries' => $countries,
+            'filters' => [
+                'search' => $search,
+            ],
         ]);
     }
 

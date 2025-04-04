@@ -35,10 +35,13 @@ class TwoFactorCode extends Notification
     public function toMail(object $notifiable): MailMessage
     {
         return (new MailMessage)
-            ->line('Your two-factor authentication code is: ' . $notifiable->two_factor_code)
-            ->action('Notification Action', url('/'))
+            ->subject('Your Two-Factor Authentication Code')
+            ->greeting('Hello ' . $notifiable->name . '!')
+            ->line('Your two-factor authentication code is:')
+            ->line('**' . $notifiable->two_factor_code . '**')
+            ->action('Login to Your Account', url('/two-factor'))
             ->line('This code will expire in 10 minutes.')
-            ->line('If you did not attempt to log in, please ignore this message.');
+            ->line('If you did not attempt to log in, please ignore this message or contact support.');
     }
 
     /**

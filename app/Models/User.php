@@ -49,7 +49,7 @@ class User extends Authenticatable
     public function generateTwoFactorCode()
     {
         $this->timestamps = false;
-        $this->two_factor_code = rand(100000, 999999);
+        $this->two_factor_code = sprintf('%06d', mt_rand(0, 999999)); // Ensures 6 digits with leading zeros
         $this->two_factor_expires_at = now()->addMinutes(10);
         $this->two_factor_verified = false;
         $this->save();

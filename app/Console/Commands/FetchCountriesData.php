@@ -38,19 +38,34 @@ class FetchCountriesData extends Command
 
             foreach ($countries as $countryData) {
                 try {
-                    // Skip if data is incomplete
-                    if (!isset($countryData['cca3']) || !isset($countryData['name']['common'])) {
+                    // Skip if essential data is incomplete (we need at least a name and a 2-letter code)
+                    if (!isset($countryData['name']['common']) || !isset($countryData['cca2'])) {
+                        $this->warn("Skipping country with incomplete data: " . json_encode(array_keys($countryData)));
                         continue;
                     }
 
+                    // Extract capital safely
+                    $capital = null;
+                    if (isset($countryData['capital']) && is_array($countryData['capital']) && !empty($countryData['capital'])) {
+                        $capital = $countryData['capital'][0];
+                    }
+
+                    // Extract coordinates safely
+                    $latitude = null;
+                    $longitude = null;
+                    if (isset($countryData['latlng']) && is_array($countryData['latlng']) && count($countryData['latlng']) >= 2) {
+                        $latitude = $countryData['latlng'][0];
+                        $longitude = $countryData['latlng'][1];
+                    }
+
                     Country::updateOrCreate(
-                        ['code' => $countryData['cca3']],
+                        ['code' => $countryData['cca2']],
                         [
                             'name' => $countryData['name']['common'],
-                            'capital' => $countryData['capital'][0] ?? null,
+                            'capital' => $capital,
                             'region' => $countryData['region'] ?? null,
-                            'latitude' => $countryData['latlng'][0] ?? null,
-                            'longitude' => $countryData['latlng'][1] ?? null,
+                            'latitude' => $latitude,
+                            'longitude' => $longitude,
                         ]
                     );
                     $count++;
